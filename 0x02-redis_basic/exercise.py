@@ -18,7 +18,7 @@ def count_calls(method: Callable) -> Callable:
     def wrapper(self, *args, **kwargs):
         """wrapper method"""
         # Get the qualified name of the method
-        method_name = method.__qualname__
+        method_name = f"{self.__class__.__name__}.{method.__name__}"
 
         # Increment the count for the method in Redis
         self._redis.incr(method_name)
