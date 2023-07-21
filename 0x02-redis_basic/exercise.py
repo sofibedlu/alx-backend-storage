@@ -9,6 +9,33 @@ from typing import Union, Callable
 from functools import wraps
 
 
+def replay(method: Callable) -> None:
+    """
+    display the history of calls of a particular function.
+    """
+    # Get the qualified name of the method
+    method_name = method.__qualname___
+
+    # Create input and output list keys
+    input_key = f"{method_name}:inputs"
+    output_key = f"{method_name}:outputs"
+
+    # Get the lists of inputs and outputs from Redis
+    inputs = method.__self__._redis.lrange(input_key, 0, -1)
+    outputs = method.__self__._redis.lrange(output_key, 0, -1)
+
+    if not inputs or not outputs:
+        print(f"No history found for method: {method_name}")
+        return
+
+    # Display the history of calls with inputs and outputs
+    print(f"{method_name} was called {len(inputs)} times:")
+    for input_str, output_str in zip(inputs, outputs):
+        input_args = eval(input_str)
+        output = eval(output_str)
+        print(f"{method_name}{input_args} -> {output}")
+
+
 def call_history(method: Callable) -> Callable:
     """
     store the history of inputs and outputs for a particular function.
