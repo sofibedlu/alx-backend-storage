@@ -8,7 +8,7 @@ def update_topics(mongo_collection, name, topics):
     """
     changes all topics of a school document based on the name
     """
-    craiteria = {"name": "{}".format(name)}
-    value = {"topics": "{}".format(topics)}
+    craiteria = {"name": name}
+    value = {"$set": {"topics": topics}}
 
-    mongo_collection.update_one(craiteria, {"$set": value})
+    mongo_collection.update_one(craiteria, value)
